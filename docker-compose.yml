@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  yolov5:
+    build: .
+    command: python3 detect.py --weights yolov5s.pt --img 640 --conf 0.4 --source /data/images
+    volumes:
+      - ./yolov5:/app
+      - ./data:/data
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 6030
+      DB_NAME: mydatabase
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+  db:
+    image: tdengine/tdengine
+    restart: always
+    environment:
+      TDENGINE_DATABASE: mydatabase
+      TDENGINE_USER: myuser
+      TDENGINE_PASSWORD: mypassword
+    volumes:
+      - ./db:/var/lib/taos
+    ports:
+      - "6030:6030"
+
